@@ -73,7 +73,7 @@ fn entrada() -> Result<keyring_core::Entry> {
 /// Fora do Windows a sessão fica em arquivo só do usuário (modo 0600).
 #[cfg(not(windows))]
 fn arquivo_sessao() -> Result<std::path::PathBuf> {
-    Ok(crate::config::pasta_base(false)?.join("Reliquias-Launcher/sessao.json"))
+    Ok(crate::instancia::config::pasta_base(false)?.join("Reliquias-Launcher/sessao.json"))
 }
 #[cfg(windows)]
 impl Cofre for CofreSo {
