@@ -1,0 +1,27 @@
+[package]
+name = "reliquias-app"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+launcher-core = { path = "../../core" }
+tauri = { version = "2.12.5", features = ["tray-icon", "test"] }
+tauri-plugin-dialog = "2.8.4"
+tauri-plugin-single-instance = "2.5.5"
+tauri-plugin-opener = "2.7.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+fs2 = "0.4"
+
+regex = "1"
+zip = { version = "0.6", default-features = false, features = ["deflate"] }
+tempfile = "3"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+

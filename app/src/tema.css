@@ -1,0 +1,209 @@
+/* Tema do launcher: fonte pixel embutida (OFL), paleta Criação (ouro) x Ruína (ametista) e a janela sem moldura. */
+@font-face {
+  font-family: "Pixelify Sans";
+  src: url("./assets/fonts/PixelifySans.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: block;
+}
+:root {
+  --pixel: "Pixelify Sans", ui-monospace, monospace;
+  --ouro: #e3b34f;
+  --ametista: #9d72e6;
+  --texto: #f2e9d8;
+  --mudo: #a89f8c;
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  font-synthesis: none;
+  color-scheme: dark;
+  color: var(--texto);
+  background: #0a0807;
+}
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  background: #0a0807;
+}
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+.janela {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  color: var(--texto);
+}
+::selection {
+  background: rgba(157, 114, 230, 0.55);
+  color: #fff;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(157, 114, 230, 0.45) transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(157, 114, 230, 0.4);
+  border-radius: 4px;
+}
+
+/* ── Botões do painel: o primário (ouro), o de vidro e o link discreto ── */
+.acao {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 9px;
+  background: linear-gradient(#efc360, #d9a63f);
+  color: #1b1305;
+  font-family: var(--pixel);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 12px 26px -10px rgba(227, 179, 79, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition:
+    transform 0.18s var(--expo),
+    box-shadow 0.18s var(--expo),
+    filter 0.18s;
+}
+.acao svg {
+  fill: currentColor;
+  flex: none;
+}
+.acao:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+  box-shadow:
+    0 18px 32px -10px rgba(227, 179, 79, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.acao:active:not(:disabled) {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+.acao:focus-visible {
+  outline: 2px solid #fff3d2;
+  outline-offset: 3px;
+}
+.acao:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+.vidro-btn {
+  all: unset;
+  box-sizing: border-box;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--texto);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.vidro-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.vidro-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.vidro-btn:focus-visible {
+  outline: 2px solid var(--ouro);
+  outline-offset: 2px;
+}
+.link-mudo {
+  all: unset;
+  justify-self: start;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mudo);
+  cursor: pointer;
+  padding: 6px 2px;
+  border-bottom: 1px solid rgba(168, 159, 140, 0.35);
+  transition: color 0.15s, border-color 0.15s;
+}
+.link-mudo:hover:not(:disabled) {
+  color: var(--texto);
+  border-color: var(--texto);
+}
+.link-mudo:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.link-mudo:focus-visible {
+  outline: 2px solid var(--ouro);
+  outline-offset: 3px;
+}
+
+/* Interruptor */
+.chave {
+  appearance: none;
+  width: 42px;
+  height: 24px;
+  margin: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.chave::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--texto);
+  transition: transform 0.2s var(--expo);
+}
+.chave:checked {
+  background: var(--ametista);
+}
+.chave:checked::after {
+  transform: translateX(18px);
+}
+.chave:focus-visible {
+  outline: 2px solid var(--ouro);
+  outline-offset: 3px;
+}
+
+:root[data-oculto] .fenda,
+:root[data-oculto] .trilha i {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fenda,
+  .trilha i {
+    animation: none !important;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

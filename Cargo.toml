@@ -1,0 +1,12 @@
+[workspace]
+members = ["core", "app/src-tauri"]
+resolver = "2"
+exclude = ["vendor/self-replace-1.5.1"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+

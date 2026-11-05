@@ -1,0 +1,9 @@
+﻿/target/
+/.smoke/
+
+/target-app/
+/.cargo-home/
+/app/node_modules/
+/app/dist/
+/app/.npm-cache/
+/app/.vite/
