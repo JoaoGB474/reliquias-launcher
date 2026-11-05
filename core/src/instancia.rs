@@ -19,9 +19,8 @@ impl Instancia {
         if let Some(raiz) = config::Config::carregar()?.pasta {
             return Ok(Self { raiz });
         }
-        let base = std::env::var_os("APPDATA").ok_or(Erro::ConfiguracaoInvalida)?;
         Ok(Self {
-            raiz: PathBuf::from(base).join("Reliquias"),
+            raiz: config::pasta_base(true)?.join("Reliquias"),
         })
     }
     pub fn trancar(&self) -> Result<Trava> {

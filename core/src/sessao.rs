@@ -63,19 +63,19 @@ pub trait Cofre: Send + Sync {
     fn apagar(&self) -> Result<()>;
 }
 pub struct CofreSo;
+#[cfg(windows)]
 fn entrada() -> Result<keyring_core::Entry> {
-    #[cfg(windows)]
-    {
-        let store = windows_native_keyring_store::Store::new().map_err(|_| Erro::Cofre)?;
-        store
-            .build("Reliquias", "sessao", None)
-            .map_err(|_| Erro::Cofre)
-    }
-    #[cfg(not(windows))]
-    {
-        Err(Erro::Cofre)
-    }
+    let store = windows_native_keyring_store::Store::new().map_err(|_| Erro::Cofre)?;
+    store
+        .build("Reliquias", "sessao", None)
+        .map_err(|_| Erro::Cofre)
 }
+/// Fora do Windows a sessão fica em arquivo só do usuário (modo 0600).
+#[cfg(not(windows))]
+fn arquivo_sessao() -> Result<std::path::PathBuf> {
+    Ok(crate::config::pasta_base(false)?.join("Reliquias-Launcher/sessao.json"))
+}
+#[cfg(windows)]
 impl Cofre for CofreSo {
     fn guardar(&self, s: &Sessao) -> Result<()> {
         entrada()?
@@ -89,11 +89,44 @@ impl Cofre for CofreSo {
         }
     }
 }
+#[cfg(not(windows))]
+impl Cofre for CofreSo {
+    fn guardar(&self, s: &Sessao) -> Result<()> {
+        use std::io::Write;
+        use std::os::unix::fs::OpenOptionsExt;
+        let p = arquivo_sessao()?;
+        let dir = p.parent().ok_or(Erro::Cofre)?;
+        std::fs::create_dir_all(dir).map_err(|_| Erro::Cofre)?;
+        let tmp = p.with_extension("tmp");
+        let mut f = std::fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .mode(0o600)
+            .open(&tmp)
+            .map_err(|_| Erro::Cofre)?;
+        f.write_all(&serde_json::to_vec(s)?).map_err(|_| Erro::Cofre)?;
+        f.sync_all().map_err(|_| Erro::Cofre)?;
+        std::fs::rename(&tmp, &p).map_err(|_| Erro::Cofre)
+    }
+    fn apagar(&self) -> Result<()> {
+        match std::fs::remove_file(arquivo_sessao()?) {
+            Ok(()) => Ok(()),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+            Err(_) => Err(Erro::Cofre),
+        }
+    }
+}
 pub fn guardar(s: &Sessao) -> Result<()> {
     CofreSo.guardar(s)
 }
+#[cfg(windows)]
 pub fn carregar() -> Option<Sessao> {
     serde_json::from_str(&entrada().ok()?.get_password().ok()?).ok()
+}
+#[cfg(not(windows))]
+pub fn carregar() -> Option<Sessao> {
+    serde_json::from_slice(&std::fs::read(arquivo_sessao().ok()?).ok()?).ok()
 }
 
 #[cfg(windows)]

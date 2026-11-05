@@ -36,7 +36,13 @@ npm ci
 npm run tauri build
 ```
 
-Requisitos: Rust 1.88 ou mais novo, Node.js e WebView2 (Windows 10/11).
+Requisitos: Rust 1.88 ou mais novo e Node.js. No Windows, WebView2 (Windows 10/11).
+
+### Linux
+
+O build para Linux sai do GitHub Actions (workflow `Linux`, na aba Actions) como AppImage e `.deb`. Para compilar à mão, instale as dependências do Tauri (`libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, `librsvg2-dev`, `libgtk-3-dev`, `patchelf`) e rode `npx tauri build --bundles appimage,deb` em `app/`.
+
+No Linux a sessão fica em `~/.config/Reliquias-Launcher/sessao.json` (modo 0600), os dados em `~/.local/share/Reliquias` e a autoatualização do launcher é desligada: baixe a versão nova.
 
 ## Configuração do build
 

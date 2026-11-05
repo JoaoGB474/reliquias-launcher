@@ -49,6 +49,10 @@ pub fn verificar(meta: &Ultimo, bytes: &[u8], chave: &[u8; 32]) -> Result<()> {
         .map_err(|_| Erro::AssinaturaInvalida)
 }
 pub async fn autoatualizar(cliente: &Cliente, atual: &Versao) -> Result<Option<Pronto>> {
+    // O executável publicado é só para Windows: fora dele a atualização é manual.
+    if !cfg!(windows) {
+        return Ok(None);
+    }
     let key = option_env!("RL_UPDATE_PUBKEY").ok_or(Erro::AtualizacaoNaoConfigurada)?;
     let chave: [u8; 32] = STANDARD
         .decode(key)

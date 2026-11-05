@@ -54,10 +54,7 @@ impl Config {
         Ok(())
     }
     pub fn caminho() -> Result<PathBuf> {
-        Ok(
-            PathBuf::from(std::env::var_os("APPDATA").ok_or(Erro::ConfiguracaoInvalida)?)
-                .join("Reliquias-Launcher/config.json"),
-        )
+        Ok(pasta_base(false)?.join("Reliquias-Launcher/config.json"))
     }
     pub fn carregar() -> Result<Self> {
         Self::carregar_de(&Self::caminho()?)
@@ -81,4 +78,24 @@ impl Config {
         tmp.persist(p).map_err(|e| Erro::Io(e.error))?;
         Ok(())
     }
+}
+
+/// Pasta base por usuário: `%APPDATA%` no Windows; no Linux, `XDG_CONFIG_HOME` (configuração)
+/// ou `XDG_DATA_HOME` (dados), com os padrões `~/.config` e `~/.local/share`.
+pub fn pasta_base(dados: bool) -> Result<PathBuf> {
+    if cfg!(windows) {
+        return std::env::var_os("APPDATA")
+            .map(PathBuf::from)
+            .ok_or(Erro::ConfiguracaoInvalida);
+    }
+    let (var, padrao) = if dados {
+        ("XDG_DATA_HOME", ".local/share")
+    } else {
+        ("XDG_CONFIG_HOME", ".config")
+    };
+    if let Some(p) = std::env::var_os(var).map(PathBuf::from).filter(|p| p.is_absolute()) {
+        return Ok(p);
+    }
+    let home = std::env::var_os("HOME").ok_or(Erro::ConfiguracaoInvalida)?;
+    Ok(PathBuf::from(home).join(padrao))
 }

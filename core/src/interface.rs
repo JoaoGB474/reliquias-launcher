@@ -62,7 +62,14 @@ pub fn memoria_total_mb() -> Result<u32> {
     }
     #[cfg(not(windows))]
     {
-        Err(Erro::ConfiguracaoInvalida)
+        let info = std::fs::read_to_string("/proc/meminfo")?;
+        let kb: u64 = info
+            .lines()
+            .find_map(|l| l.strip_prefix("MemTotal:"))
+            .and_then(|r| r.split_whitespace().next())
+            .and_then(|n| n.parse().ok())
+            .ok_or(Erro::ConfiguracaoInvalida)?;
+        Ok((kb / 1024).min(u32::MAX as u64) as u32)
     }
 }
 /// Nunca entrega uma pasta alheia ao sincronizador que remove arquivos gerenciados.
