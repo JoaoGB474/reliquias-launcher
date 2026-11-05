@@ -31,7 +31,7 @@ jobs:
         working-directory: app
         run: |
           npm ci
-          npx tauri build --bundles appimage,deb
+          npx tauri build --bundles appimage,deb --config '{"productName":"Reliquias"}'
       - uses: actions/upload-artifact@v4
         with:
           name: reliquias-launcher-linux
