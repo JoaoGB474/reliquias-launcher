@@ -37,6 +37,38 @@ async fn buscar_novidades(cliente: launcher_core::erro::Result<Cliente>) -> Novi
         Err(_) => Novidades::default(),
     }
 }
+/// Abre o navegador. No AppImage as variáveis do pacote quebram o `xdg-open`, então no Linux
+/// ele roda com o ambiente limpo; se falhar, usa o plugin e deixa o link no terminal.
+fn abrir_url(app: &AppHandle, url: &str) {
+    eprintln!("[launcher] abra no navegador: {url}");
+    #[cfg(target_os = "linux")]
+    {
+        let mut cmd = std::process::Command::new("xdg-open");
+        cmd.arg(url);
+        for var in [
+            "LD_LIBRARY_PATH",
+            "LD_PRELOAD",
+            "GTK_PATH",
+            "GTK_EXE_PREFIX",
+            "GTK_DATA_PREFIX",
+            "GTK_IM_MODULE_FILE",
+            "GDK_PIXBUF_MODULE_FILE",
+            "GIO_EXTRA_MODULES",
+            "GSETTINGS_SCHEMA_DIR",
+            "PERLLIB",
+            "PYTHONHOME",
+            "PYTHONPATH",
+            "QT_PLUGIN_PATH",
+            "XDG_DATA_DIRS_APPIMAGE",
+        ] {
+            cmd.env_remove(var);
+        }
+        if cmd.spawn().is_ok() {
+            return;
+        }
+    }
+    let _ = app.opener().open_url(url, None::<&str>);
+}
 impl Falha {
     fn codigo(codigo: &'static str) -> Self {
         Self {
@@ -142,7 +174,7 @@ pub async fn entrar(app: AppHandle, s: State<'_, AppState>) -> Res<()> {
  let c=Cliente::desenvolvimento()?;
  let abrir=app.clone();
  tokio::select! {
- r=launcher_core::login::entrar(&c,move|url|{let _=abrir.opener().open_url(url,None::<&str>);})=>match r {
+ r=launcher_core::login::entrar(&c,move|url|{abrir_url(&abrir,url);})=>match r {
   Ok(_)=>{*s.aguardando.lock().map_err(|_|ocupado())?=None;Ok(())},
   Err(Erro::SemAprovacao{discord_id})=>{*s.aguardando.lock().map_err(|_|ocupado())?=Some(discord_id);Ok(())},
   Err(e)=>Err(Falha::from(e))
