@@ -2,6 +2,11 @@ name: Linux
 
 on:
   workflow_dispatch:
+    inputs:
+      completo:
+        description: "Build final: otimizado, com testes e AppImage"
+        type: boolean
+        default: false
   push:
     tags: ["v*"]
 
@@ -12,6 +17,7 @@ jobs:
       RL_SERVIDOR: ${{ vars.RL_SERVIDOR }}
       RL_SPKI: ${{ vars.RL_SPKI }}
       RL_DISCORD_CLIENT_ID: ${{ vars.RL_DISCORD_CLIENT_ID }}
+      COMPLETO: ${{ inputs.completo || startsWith(github.ref, 'refs/tags/') }}
     steps:
       - uses: actions/checkout@v4
       - name: Dependências do sistema
@@ -25,11 +31,26 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - uses: Swatinem/rust-cache@v2
-      - name: Testes do núcleo
-        run: cargo test -p launcher-core --lib
-      - name: Java oficial no Linux
-        run: cargo test -p launcher-core --test instalar java_oficial_21 -- --ignored --nocapture
-      - name: Build
+        with:
+          key: ${{ env.COMPLETO }}
+      - name: Testes e Java oficial
+        if: env.COMPLETO == 'true'
+        run: |
+          cargo test -p launcher-core --lib
+          cargo test -p launcher-core --test instalar java_oficial_21 -- --ignored --nocapture
+      - name: Build rápido (sem LTO)
+        if: env.COMPLETO != 'true'
+        working-directory: app
+        env:
+          CARGO_PROFILE_RELEASE_LTO: "false"
+          CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "16"
+          CARGO_PROFILE_RELEASE_OPT_LEVEL: "1"
+          CARGO_PROFILE_RELEASE_STRIP: "false"
+        run: |
+          npm ci
+          npx tauri build --bundles deb --config '{"productName":"Reliquias"}'
+      - name: Build final
+        if: env.COMPLETO == 'true'
         working-directory: app
         run: |
           npm ci
