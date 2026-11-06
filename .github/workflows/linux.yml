@@ -27,6 +27,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Testes do núcleo
         run: cargo test -p launcher-core --lib
+      - name: Java oficial no Linux
+        run: cargo test -p launcher-core --test instalar java_oficial_21 -- --ignored --nocapture
       - name: Build
         working-directory: app
         run: |

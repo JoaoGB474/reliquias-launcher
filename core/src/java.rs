@@ -58,6 +58,7 @@ pub async fn json<T: serde::de::DeserializeOwned>(url: &str) -> Result<T> {
 }
 pub async fn instalar_manifesto(m: &Runtime, raiz: &Path, prog: Sender<Progresso>) -> Result<()> {
     let mut itens = Vec::new();
+    let mut links: Vec<(PathBuf, String)> = Vec::new();
     for (nome, entrada) in &m.files {
         let destino = caminho(raiz, nome)?;
         match entrada {
@@ -76,12 +77,19 @@ pub async fn instalar_manifesto(m: &Runtime, raiz: &Path, prog: Sender<Progresso
                     fallback: None,
                 });
             }
-            Entrada::Link { .. } => return Err(Erro::ConfiguracaoInvalida),
+            Entrada::Link { target } => links.push((destino, target.clone())),
         }
     }
     baixar_todos(itens, prog, 8).await?;
+    #[cfg(not(unix))]
+    if !links.is_empty() {
+        return Err(Erro::ConfiguracaoInvalida);
+    }
     #[cfg(unix)]
     {
+        for (destino, alvo) in &links {
+            criar_link(raiz, destino, alvo)?;
+        }
         use std::os::unix::fs::PermissionsExt;
         for (nome, entrada) in &m.files {
             if matches!(
@@ -98,6 +106,41 @@ pub async fn instalar_manifesto(m: &Runtime, raiz: &Path, prog: Sender<Progresso
             }
         }
     }
+    Ok(())
+}
+/// Cria o link simbólico do runtime, recusando alvo absoluto ou que saia da pasta do runtime.
+#[cfg(unix)]
+fn criar_link(raiz: &Path, destino: &Path, alvo: &str) -> Result<()> {
+    use std::path::Component;
+    let mut atual: Vec<_> = destino
+        .parent()
+        .and_then(|p| p.strip_prefix(raiz).ok())
+        .ok_or(Erro::ConfiguracaoInvalida)?
+        .components()
+        .collect();
+    for c in Path::new(alvo).components() {
+        match c {
+            Component::Normal(_) => atual.push(c),
+            Component::CurDir => {}
+            Component::ParentDir => {
+                atual.pop().ok_or(Erro::ConfiguracaoInvalida)?;
+            }
+            _ => return Err(Erro::ConfiguracaoInvalida),
+        }
+    }
+    if let Some(pai) = destino.parent() {
+        std::fs::create_dir_all(pai)?;
+    }
+    if let Ok(meta) = std::fs::symlink_metadata(destino) {
+        if meta.file_type().is_symlink() && std::fs::read_link(destino).ok().as_deref() == Some(Path::new(alvo)) {
+            return Ok(());
+        }
+        if meta.is_dir() {
+            return Err(Erro::ConfiguracaoInvalida);
+        }
+        std::fs::remove_file(destino)?;
+    }
+    std::os::unix::fs::symlink(alvo, destino)?;
     Ok(())
 }
 pub async fn garantir(inst: &Instancia, versao: u8, prog: Sender<Progresso>) -> Result<PathBuf> {
