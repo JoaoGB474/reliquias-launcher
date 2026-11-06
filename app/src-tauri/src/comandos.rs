@@ -47,6 +47,7 @@ impl Falha {
 }
 impl From<Erro> for Falha {
     fn from(e: Erro) -> Self {
+        eprintln!("[launcher] erro: {e:?}");
         Self {
             mensagem: e.to_string(),
             codigo: match e {
@@ -215,6 +216,7 @@ async fn instalar(app: &AppHandle, s: &AppState, jogar: bool) -> Res<()> {
         let m = completo.filtrado(cfg.visual);
         let (tx, task) = progresso(app.clone(), "Baixando arquivos");
         let preparado = async {
+            eprintln!("[launcher] etapa: {}", if jogar { "preparar e jogar" } else { "instalar" });
             if jogar {
                 let sessao = Arc::new(tokio::sync::Mutex::new(
                     sessao::carregar().ok_or(Erro::ContaRevogada)?,
@@ -283,11 +285,14 @@ async fn instalar(app: &AppHandle, s: &AppState, jogar: bool) -> Res<()> {
                 sincronizado?;
                 interface::saida_jogo(status?.code())?;
             } else {
+                eprintln!("[launcher] etapa: sincronizar pack");
                 launcher_core::pack::sincronizar(&m, &inst.raiz, &c, tx.clone()).await?;
                 if let Some(servidor) = &m.servidor {
                     interface::garantir_servidor(&inst, &servidor.nome, &servidor.endereco)?;
                 }
+                eprintln!("[launcher] etapa: instalar Minecraft, Java e NeoForge");
                 launcher_core::mojang::instalar(&m, &inst, tx).await?;
+                eprintln!("[launcher] etapa: aplicar visual");
                 interface::aplicar_visual(&inst, cfg.visual, &completo)?;
                 interface::aplicar_shader(&inst, cfg.shader)?;
             }
