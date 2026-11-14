@@ -1,6 +1,16 @@
-﻿# Relíquias Launcher
+# Relíquias Launcher
 
 Launcher do servidor Relíquias SMP (Minecraft 1.21.1, NeoForge). Instala Java, Minecraft, NeoForge e o pacote de mods, entra com a conta do Discord e mantém tudo atualizado a cada abertura.
+
+## Download
+
+Baixe a versão mais recente em **[Releases](https://github.com/JoaoGB474/reliquias-launcher/releases/latest)** (`Reliquias-Launcher.exe`).
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org). Veja a [política de assinatura de código](CODE_SIGNING_POLICY.md) e a [política de privacidade](PRIVACY.md).
+
+## Licença
+
+[MIT](LICENSE).
 
 ## Estrutura
 
