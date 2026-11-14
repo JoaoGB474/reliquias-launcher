@@ -24,8 +24,25 @@ Launcher oficial do **Relíquias SMP** · Minecraft 1.21.1 · NeoForge
 
 O launcher cuida do resto: Java, Minecraft, NeoForge e todos os mods, sempre na versão do servidor.
 
-> [!NOTE]
-> Na primeira vez, o Windows pode mostrar a tela azul do SmartScreen. Clique em **Mais informações → Executar assim mesmo**.
+## 🛡️ Apareceu uma tela azul?
+
+<div align="center">
+<img src="docs/smartscreen.svg" width="640" alt="Clique em Mais informações e depois em Executar assim mesmo">
+</div>
+
+<br>
+
+É o **SmartScreen**, o segurança da porta do Windows. Diante de um programa que nunca viu, ele faz duas perguntas:
+
+> 🪪 **"Quem fez isso?"**
+> Pra responder, o programa precisa de um crachá comprado de uma empresa que confere a identidade do autor. O launcher é de um servidor de amigos e não tem esse crachá pago.
+
+> 👥 **"Muita gente já usa?"**
+> O launcher é novo e só a galera do servidor baixa. Pro Windows, ninguém usou ainda.
+
+Sem crachá e sem fama, o segurança não barra, só avisa: *"não conheço esse cara"*. **Não é vírus.** É o Windows dizendo que não conhece o programa.
+
+Clique em **Mais informações → Executar assim mesmo** e pronto. Isso só acontece na primeira vez.
 
 ## O que ele faz
 
