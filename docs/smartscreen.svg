@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="720" height="280" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <style>
+    .a { animation: a 9s infinite; }
+    .b { animation: b 9s infinite; opacity: 0; }
+    .c { animation: c 9s infinite; opacity: 0; }
+    .cur { animation: cur 9s infinite cubic-bezier(.45,0,.25,1); }
+    .r1 { animation: r1 9s infinite; transform-box: fill-box; transform-origin: center; opacity: 0; }
+    .r2 { animation: r2 9s infinite; transform-box: fill-box; transform-origin: center; opacity: 0; }
+    .spark { animation: spark 9s infinite; transform-box: fill-box; transform-origin: center; opacity: 0; }
+    @keyframes a { 0%,19% { opacity: 1 } 22%,96% { opacity: 0 } 100% { opacity: 1 } }
+    @keyframes b { 0%,19% { opacity: 0 } 22%,44% { opacity: 1 } 48%,100% { opacity: 0 } }
+    @keyframes c { 0%,45% { opacity: 0 } 50%,92% { opacity: 1 } 97%,100% { opacity: 0 } }
+    @keyframes cur {
+      0% { transform: translate(660px,260px); opacity: 0 }
+      4% { transform: translate(660px,260px); opacity: 1 }
+      16%,21% { transform: translate(112px,152px); opacity: 1 }
+      36%,44% { transform: translate(470px,226px); opacity: 1 }
+      47%,100% { transform: translate(470px,226px); opacity: 0 }
+    }
+    @keyframes r1 { 0%,17% { opacity: 0; transform: scale(.3) } 18% { opacity: .9 } 23%,100% { opacity: 0; transform: scale(1.6) } }
+    @keyframes r2 { 0%,39% { opacity: 0; transform: scale(.3) } 40% { opacity: .9 } 45%,100% { opacity: 0; transform: scale(1.6) } }
+    @keyframes spark { 0%,48% { opacity: 0; transform: scale(.4) } 54% { opacity: 1; transform: scale(1.15) } 58%,90% { opacity: 1; transform: scale(1) } 96%,100% { opacity: 0; transform: scale(1) } }
+  </style>
+
+  <defs>
+    <linearGradient id="azul" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f6fd1"/>
+      <stop offset="1" stop-color="#0d4ea6"/>
+    </linearGradient>
+    <radialGradient id="ouro" cx=".5" cy=".5" r=".6">
+      <stop offset="0" stop-color="#3a2d12"/>
+      <stop offset="1" stop-color="#14111a"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="720" height="280" rx="18" fill="#14111a"/>
+
+  <!-- Cena 1: aviso -->
+  <g class="a">
+    <rect x="16" y="16" width="688" height="248" rx="12" fill="url(#azul)"/>
+    <text x="48" y="74" fill="#fff" font-size="26" font-weight="600">O Windows protegeu o computador</text>
+    <text x="48" y="110" fill="#dbe8ff" font-size="15">Um aplicativo desconhecido foi impedido de iniciar.</text>
+    <text x="48" y="157" fill="#fff" font-size="15" text-decoration="underline">Mais informações</text>
+    <rect x="556" y="206" width="124" height="38" rx="4" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <text x="618" y="230" fill="#fff" font-size="14" text-anchor="middle">Não executar</text>
+  </g>
+
+  <!-- Cena 2: detalhes -->
+  <g class="b">
+    <rect x="16" y="16" width="688" height="248" rx="12" fill="url(#azul)"/>
+    <text x="48" y="74" fill="#fff" font-size="26" font-weight="600">O Windows protegeu o computador</text>
+    <text x="48" y="114" fill="#dbe8ff" font-size="15">Aplicativo:  <tspan fill="#fff" font-weight="600">Reliquias-Launcher.exe</tspan></text>
+    <text x="48" y="142" fill="#dbe8ff" font-size="15">Editor:  <tspan fill="#fff">Editor desconhecido</tspan></text>
+    <rect x="392" y="206" width="152" height="38" rx="4" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <text x="468" y="230" fill="#fff" font-size="14" text-anchor="middle">Executar assim mesmo</text>
+    <rect x="556" y="206" width="124" height="38" rx="4" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <text x="618" y="230" fill="#fff" font-size="14" text-anchor="middle">Não executar</text>
+  </g>
+
+  <!-- Cena 3: pronto -->
+  <g class="c">
+    <rect x="16" y="16" width="688" height="248" rx="12" fill="url(#ouro)"/>
+    <g class="spark">
+      <circle cx="360" cy="112" r="34" fill="none" stroke="#e2b84a" stroke-width="3"/>
+      <path d="M344 113 l11 11 l22 -24" fill="none" stroke="#e2b84a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="360" y="192" fill="#f3e3b5" font-size="26" font-weight="600" text-anchor="middle">Pronto. Bora jogar!</text>
+  </g>
+
+  <!-- Cliques -->
+  <circle class="r1" cx="112" cy="152" r="22" fill="none" stroke="#fff" stroke-width="2"/>
+  <circle class="r2" cx="470" cy="226" r="22" fill="none" stroke="#fff" stroke-width="2"/>
+
+  <!-- Cursor -->
+  <g class="cur">
+    <path d="M0 0 L0 22 L6 17 L10 26 L14 24 L10 15 L18 15 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>
+  </g>
+</svg>
