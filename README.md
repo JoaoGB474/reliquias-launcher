@@ -1,26 +1,62 @@
+<div align="center">
+
+<img src="app/src-tauri/icons/128x128@2x.png" width="128" alt="">
+
 # Relíquias Launcher
 
-Launcher do servidor Relíquias SMP (Minecraft 1.21.1, NeoForge). Instala Java, Minecraft, NeoForge e o pacote de mods, entra com a conta do Discord e mantém tudo atualizado a cada abertura.
+Launcher oficial do **Relíquias SMP** · Minecraft 1.21.1 · NeoForge
 
-## Download
+[![Versão](https://img.shields.io/github/v/release/JoaoGB474/reliquias-launcher?label=vers%C3%A3o&color=c9a227&style=for-the-badge)](https://github.com/JoaoGB474/reliquias-launcher/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/JoaoGB474/reliquias-launcher/total?label=downloads&color=6b4fa0&style=for-the-badge)](https://github.com/JoaoGB474/reliquias-launcher/releases)
+[![Licença](https://img.shields.io/github/license/JoaoGB474/reliquias-launcher?label=licen%C3%A7a&color=3a3a3a&style=for-the-badge)](LICENSE)
 
-Baixe a versão mais recente em **[Releases](https://github.com/JoaoGB474/reliquias-launcher/releases/latest)** (`Reliquias-Launcher.exe`).
+### [⬇ Baixar para Windows](https://github.com/JoaoGB474/reliquias-launcher/releases/latest/download/Reliquias-Launcher.exe)
 
-Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org). Veja a [política de assinatura de código](CODE_SIGNING_POLICY.md) e a [política de privacidade](PRIVACY.md).
+</div>
 
-## Licença
+---
 
-[MIT](LICENSE).
+## Como jogar
 
-## Estrutura
+1. Baixe o `Reliquias-Launcher.exe` e abra. Não precisa instalar.
+2. Entre com a sua conta do Discord.
+3. Clique em **Jogar**.
+
+O launcher cuida do resto: Java, Minecraft, NeoForge e todos os mods, sempre na versão do servidor.
+
+> [!NOTE]
+> Na primeira vez, o Windows pode mostrar a tela azul do SmartScreen. Clique em **Mais informações → Executar assim mesmo**.
+
+## O que ele faz
+
+| | |
+|---|---|
+| 📦 **Tudo automático** | Instala Java, Minecraft, NeoForge e o pacote de mods. |
+| 🔄 **Sempre em dia** | Atualiza o pacote e o próprio launcher a cada abertura. |
+| 💬 **Login pelo Discord** | Sem conta extra: a whitelist é a do servidor. |
+| ⚡ **Downloads retomáveis** | Caiu a internet? Continua de onde parou. |
+| 🔒 **Verificado** | Cada arquivo é conferido por SHA-256; atualizações levam assinatura Ed25519. |
+
+## Privacidade e segurança
+
+- Os tokens ficam só no Gerenciador de Credenciais do Windows, nunca em arquivo.
+- A conexão com o servidor usa pinning de certificado.
+- Detalhes em [PRIVACY.md](PRIVACY.md).
+
+<details>
+<summary><b>Para desenvolvedores</b></summary>
+
+### Estrutura
 
 - `core/`: biblioteca Rust e CLI `rl` (login, sincronia do pacote, instalação, lançamento do jogo).
 - `app/`: aplicativo desktop em Tauri 2, com interface em Svelte 5 e Vite.
 - `vendor/`: dependência `self-replace` usada na autoatualização.
 
-## Build
+### Requisitos
 
-Em `launcher/` (a pasta raiz deste repositório):
+Rust 1.88 ou mais novo e Node.js. No Windows, WebView2 (Windows 10/11).
+
+### Build
 
 ```powershell
 cargo test --workspace
@@ -46,23 +82,29 @@ npm ci
 npm run tauri build
 ```
 
-Requisitos: Rust 1.88 ou mais novo e Node.js. No Windows, WebView2 (Windows 10/11).
-
-### Linux
-
-O build para Linux sai do GitHub Actions (workflow `Linux`, na aba Actions) como AppImage e `.deb`. Para compilar à mão, instale as dependências do Tauri (`libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, `librsvg2-dev`, `libgtk-3-dev`, `patchelf`) e rode `npx tauri build --bundles appimage,deb` em `app/`.
-
-No Linux a sessão fica em `~/.config/Reliquias-Launcher/sessao.json` (modo 0600), os dados em `~/.local/share/Reliquias` e a autoatualização do launcher é desligada: baixe a versão nova.
-
-## Configuração do build
+### Configuração do build
 
 Valores públicos, embutidos na compilação (não contêm segredos):
 
-- `RL_SERVIDOR`: `host:porta` da API.
-- `RL_SPKI`: SHA-256 do SPKI do certificado do servidor, em 64 caracteres hexadecimais.
-- `RL_DISCORD_CLIENT_ID`: ID público da aplicação Discord. Sem ele o login falha antes de abrir o navegador.
-- `RL_UPDATE_PUBKEY`: chave pública Ed25519 de atualização, em base64. Sem ela a autoatualização fica indisponível. A assinatura cobre o executável inteiro, e SHA-256 e tamanho também são verificados.
+| Variável | Conteúdo |
+|---|---|
+| `RL_SERVIDOR` | `host:porta` da API. |
+| `RL_SPKI` | SHA-256 do SPKI do certificado do servidor (64 caracteres hex). |
+| `RL_DISCORD_CLIENT_ID` | ID público da aplicação Discord. Sem ele o login falha antes de abrir o navegador. |
+| `RL_UPDATE_PUBKEY` | Chave pública Ed25519 das atualizações, em base64. Sem ela a autoatualização fica desligada. |
 
-## Segurança
+### Linux
 
-Os tokens ficam apenas no Windows Credential Manager, sem arquivo de sessão. Downloads são verificados por SHA-256 e retomados após queda de conexão. A conexão com a API usa pinning do certificado.
+O build sai do GitHub Actions (workflow `Linux`) como AppImage e `.deb`. Para compilar à mão, instale `libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, `librsvg2-dev`, `libgtk-3-dev` e `patchelf`, e rode `npx tauri build --bundles appimage,deb` em `app/`.
+
+No Linux a sessão fica em `~/.config/Reliquias-Launcher/sessao.json` (modo 0600), os dados em `~/.local/share/Reliquias`, e a autoatualização do launcher é desligada: baixe a versão nova.
+
+</details>
+
+---
+
+<div align="center">
+
+Código aberto sob a licença [MIT](LICENSE).
+
+</div>
